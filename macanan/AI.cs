@@ -36,7 +36,7 @@ namespace macanan
             return bestMove;
         }
         */
-        public int minimax(Board state,bool max)
+        public int minimax(Board state, bool max)
         {
             this.bidaks = state.getBidak();
             this.path = state.getPath();
@@ -44,18 +44,23 @@ namespace macanan
             int val = -1;
             int arah = -1;
 
-            if(max){
-                val= _max(state,2,true);
-            }else{
-                val= _min(state,2,false);               
+            if (max)
+            {
+                val = _max(state, 2, true);
             }
-            
+            else
+            {
+                val = _min(state, 2, false);
+            }
+
             return val;//action that causes val
 
         }
-        public int _max(Board state,int depth,bool max){
-            int[] bestMove=null;
-            if(depth==0 || gameOver(state)[0]>-1){
+        public int _max(Board state, int depth, bool max)
+        {
+            int[] bestMove = null;
+            if (depth == 0 || gameOver(state)[0] > -1)
+            {
                 //akses semua arah, dihitung masing2 evalnya per arah dlm for
                 List<List<List<int[]>>> info = arahBoleh(state, max);
                 //index sebenarnya
@@ -68,7 +73,7 @@ namespace macanan
                 int[] evalperarah = new int[8];
                 List<Bidak> tempbidak = bidaks;
 
-                
+
                 for (int i = 0; i < arah.Count; i++)
                 {
 
@@ -96,7 +101,8 @@ namespace macanan
                 evalperarah[i];
             }
             int v = int.MinValue;
-            foreach(int[] gerak in arahBoleh(state,max)){
+            foreach (int[] gerak in arahBoleh(state, max))
+            {
                 Board b = state;
                 List<Bidak> bids = new List<Bidak>();
 
@@ -107,9 +113,11 @@ namespace macanan
             return v;
         }
 
-        public int _min(Board state,int depth,bool max){
-            int[] bestMove=null;
-            if(depth==0||gameOver(state)[0]>-1){
+        public int _min(Board state, int depth, bool max)
+        {
+            int[] bestMove = null;
+            if (depth == 0 || gameOver(state)[0] > -1)
+            {
                 //akses semua arah, dihitung masing2 evalnya per arah dlm for
                 List<List<List<int[]>>> info = arahBoleh(state, max);
                 //index sebenarnya
@@ -122,7 +130,7 @@ namespace macanan
                 int[] evalperarah = new int[8];
                 List<Bidak> tempbidak = bidaks;
 
-                
+
                 for (int i = 0; i < arah.Count; i++)
                 {
 
@@ -146,8 +154,9 @@ namespace macanan
             }
             int v = int.MaxValue;
 
-            foreach(int[] gerak in arahBoleh(state,max)){
-                v = Math.Min(v,_max(state,depth,max));
+            foreach (int[] gerak in arahBoleh(state, max))
+            {
+                v = Math.Min(v, _max(state, depth, max));
             }
             return v;
         }
@@ -199,7 +208,7 @@ namespace macanan
 
         public List<List<List<int[]>>> arahBoleh(Board state, bool player)
         {
-            char[] statpos=state.getStatusPos();
+            char[] statpos = state.getStatusPos();
             //int[][] informasi = null;//index bidak,isi path
             List<List<List<int[]>>> info = new List<List<List<int[]>>>();
             List<Bidak> b = state.getBidak();
@@ -207,7 +216,7 @@ namespace macanan
             if (player)
             {
                 int index = 0;
-                foreach(Bidak bidaks in b)
+                foreach (Bidak bidaks in b)
                 {
                     List<List<int[]>> infotiapbidak = new List<List<int[]>>();
 
@@ -234,7 +243,7 @@ namespace macanan
                     }
 
                     infotiapbidak.Add(tempindex);
-                    
+
 
 
                     info.Add(infotiapbidak);
@@ -249,33 +258,42 @@ namespace macanan
             return info;
         }
 
-        public int[] checkArah(int point,int[] check,char[] statpos)
+        public int[] checkArah(int point, int[] check, char[] statpos)
         {
-            int jml=0;
-            int tempPos=-1;
-            int[] val = {-1,-1};//jenis,tempat--jenis 0=diam,1=gerak,2=loncat
-            List<int>loncatKe=new List<int>();
+            int jml = 0;
+            int tempPos = -1;
+            int[] val = { -1, -1 };//jenis,tempat--jenis 0=diam,1=gerak,2=loncat
+            List<int> loncatKe = new List<int>();
             for (int i = 0; i < check.Length; i++)
             {
-               int tempat=check[i];
-               if(statpos[tempat]=='O'){
-                  jml++;
-               }else if(statpos[tempat]=='X'){
-                   tempPos=tempat;
-                   break;
-               } 
+                int tempat = check[i];
+                if (statpos[tempat] == 'O')
+                {
+                    jml++;
+                }
+                else if (statpos[tempat] == 'X')
+                {
+                    tempPos = tempat;
+                    break;
+                }
             }
-            if(jml==0){
-                val[0]=1;
-                val[1]=tempPos;
-            }else if(jml>0){
-               if(jml%2==0){
-                   val[0] = 0;
-                   val[1] = tempPos;
-               }else if(jml%2==1){
-                   val[0] = 2;
-                   val[1] = tempPos;
-               }
+            if (jml == 0)
+            {
+                val[0] = 1;
+                val[1] = tempPos;
+            }
+            else if (jml > 0)
+            {
+                if (jml % 2 == 0)
+                {
+                    val[0] = 0;
+                    val[1] = tempPos;
+                }
+                else if (jml % 2 == 1)
+                {
+                    val[0] = 2;
+                    val[1] = tempPos;
+                }
             }
 
             return val;

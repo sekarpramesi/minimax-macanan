@@ -509,6 +509,9 @@ namespace macanan
         List<Bidak> bidak = new List<Bidak>();
 
         bool start = false;
+        bool AIMacan = false;
+        bool AIWong = false;
+
         int turn = 0;
 
         int bidakkiri = 11;
@@ -522,16 +525,32 @@ namespace macanan
 
         int indexpointmacan = -1;
 
+        Rectangle[] kolomdead = new Rectangle[17];
+
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            papan = new Board(path);
+            panel1.Size = this.Size;
+            panel2.Size = this.Size;
+
+            panel1.Top = 0;
+            panel1.Left = 10;
+
+            panel2.Top = 0;
+            panel2.Left = 10;
+
+            panel1.Visible = false;
+            
+            //panel1.Focus();
+            //panel1.BackColor = Color.White;
+            papan = new Board(path, nextpos);
 
             for (int i = 0; i < 38; i++)
             {
@@ -558,9 +577,8 @@ namespace macanan
             //    Console.WriteLine(Array.IndexOf(cek, 1));
             //    Console.WriteLine("a");
             //}
-            panel1.Focus();
-            panel1.BackColor = Color.White;
-            nowpos = point[1];
+            
+            //nowpos = point[1];
 
             for (int i = 0; i < 38; i++)
             {
@@ -581,12 +599,55 @@ namespace macanan
             Graphics g = e.Graphics;
             g.Clear(Color.White);
 
-            //map
+            Brush brushtext = new SolidBrush(Color.Red);
+
+            String text = "";
+            if (turn == 0)
+            {
+                text = "WONG turn, put 9 WONG seeds.";
+            }
+            else if (turn % 2 == 0)
+            {
+                text = "WONG turn, put or move 1 WONG seed.";
+                if (!AIWong)
+                    text += "\n drag to move, click to put.";
+            }
+            else if (turn % 2 == 1)
+            {
+                text = "MACAN turn.";
+                if (!AIMacan)
+                    text += "\n click to move.";
+            }
+
+            Font textfont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Regular);
+            g.DrawString(text, textfont, brushtext, new Point(810, 210));
+
+            
+
+
+            
             Brush brush = new SolidBrush(Color.Blue);
             Pen pen = new Pen(brush, 3);
             Brush brush1 = new SolidBrush(Color.Red);
             Pen pen1 = new Pen(brush1, 3);
 
+            //kolomdead
+            for (int i = 0; i < 9; i++)
+            {
+                kolomdead[i] = new Rectangle(660, 110 + (50 * i), 50, 50);
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                kolomdead[i + 9] = new Rectangle(710, 110 + (50 * i), 50, 50);
+            }
+
+            for (int i = 0; i < kolomdead.Length; i++)
+            {
+                g.DrawRectangle(pen1, kolomdead[i]);
+            }
+
+            //map
             for (int i = 0; i < 38; i++)
             {
                 g.FillRectangle(brush1,rectpos[i]);
@@ -734,155 +795,32 @@ namespace macanan
             }
 
             img = Image.FromFile("wong.png");
+            int countermati = 0;
             for (int i = 0; i < pos.Count; i++)
             {
-                if (bidak[i].getType()=="Macan")
-                    img = Image.FromFile("macan.png");
-                else
-                    img = Image.FromFile("wong.png");
+                if (!bidak[i].getIsDead())
+                {
+                    if (bidak[i].getType() == "Macan")
+                        img = Image.FromFile("macan.png");
+                    else
+                        img = Image.FromFile("wong.png");
 
-                Point tpos = new Point(pos[i].X-25, pos[i].Y-25);
-                Rectangle rect_image = new Rectangle(tpos, size);
-                g.DrawImage(img, rect_image);
+                    Point tpos = new Point(pos[i].X - 25, pos[i].Y - 25);
+                    Rectangle rect_image = new Rectangle(tpos, size);
+                    g.DrawImage(img, rect_image);
+                }
+                else //ini yg mati
+                {
+                    img = Image.FromFile("wong.png");
+                    Point tpos = new Point(kolomdead[countermati].X, kolomdead[countermati].Y);
+                    Rectangle rect_image = new Rectangle(tpos, size);
+                    g.DrawImage(img, rect_image);
+
+                    countermati++;
+                }
             }
 
-        }
 
-        private void panel1_MouseClick(object sender, MouseEventArgs e)
-        {
-            ////turn genap = wong
-            //Rectangle rect_cursor = new Rectangle(e.X, e.Y, 1, 1);
-
-            //if (turn % 2 == 0)
-            //{
-            //    for (int i = 1; i < rectpos.Length; i++)
-            //    {
-            //        if (rect_cursor.IntersectsWith(rectpos[i]) && pos.Count < 21)
-            //        {
-            //            if (!drag)
-            //            {
-            //                Console.WriteLine("wong");
-            //                Console.WriteLine(statusPos[i]);
-            //                if (statusPos[i] == 'X')
-            //                {
-
-            //                    nowpos = point[i];
-            //                    pos.Add(point[i]);
-            //                    int index = pos.Count - 1;
-            //                    bidak.Add(new Bidak(point[i], i, "Wong", nextpos[i], path[i]));
-            //                    papan.setBidak(bidak);
-            //                    papan.setStatusPos(i, 'O');
-            //                    statusPos[i] = 'O';
-
-            //                    if (bidakkiri > 0)
-            //                    {
-            //                        bidakkiri--;
-            //                    }
-            //                    else
-            //                    {
-            //                        bidakkanan--;
-            //                    }
-
-            //                    if (pos.Count == 9)
-            //                    {
-            //                        turn++;
-            //                        Console.WriteLine("turn" + turn + "");
-            //                    }
-            //                    else if (pos.Count > 9)
-            //                    {
-            //                        turn++;
-            //                        Console.WriteLine("turn" + turn + "");
-            //                    }
-
-            //                    break;
-            //                }
-            //            }
-            //            //else if (statusPos[i] == 'O')
-            //            //{
-            //            //    statusPos[i] = 'X';
-
-            //            //    if (pos.Count > 9)
-            //            //    {
-            //            //        drag = true;
-            //            //        indexdrag = i;
-            //            //        Console.WriteLine("lalalalal");
-            //            //        Console.WriteLine("indexdrag = " + indexdrag);
-            //            //    }
-            //            //    break;
-            //            //}
-            //        }
-            //    }
-
-
-            //}
-
-
-            ////turn ai
-            //else if (turn % 2 == 1)
-            //{
-            //    //manggil Ai harusnya
-
-            //    for (int i = 1; i < rectpos.Length; i++)
-            //    {
-            //        if (rect_cursor.IntersectsWith(rectpos[i]) && pos.Count < 21)
-            //        {
-
-            //            if (!drag)
-            //            {
-            //                Console.WriteLine("macan");
-
-            //                if (statusPos[i] == 'X')
-            //                {
-            //                    if (pos.Count == 9)
-            //                    {
-            //                        nowpos = point[i];
-            //                        pos.Add(point[i]);
-            //                        int index = pos.Count - 1;
-            //                        indexMacan = index;
-            //                        bidak.Add(new Bidak(point[i], i, "Macan", nextpos[i], path[i]));
-            //                        papan.setBidak(bidak);
-            //                        papan.setStatusPos(i, 'M');
-            //                        statusPos[i] = 'M';
-            //                        turn++;
-            //                    }
-            //                    else
-            //                    {
-            //                        int posMacan = bidak[indexMacan].getPoint();
-            //                        for (int j = 0; j < nextpos[posMacan].Length; j++)
-            //                        {
-            //                            Console.WriteLine(i + " == " + nextpos[posMacan][j]);
-            //                            if (i == nextpos[posMacan][j])
-            //                            {
-            //                                pos[indexMacan] = point[i];
-            //                                bidak[indexMacan].setPos(point[i]);
-            //                                bidak[indexMacan].setPoint(i);
-            //                                bidak[indexMacan].setNextpos(nextpos[indexMacan]);
-            //                                turn++;
-            //                            }
-            //                        }
-
-            //                    }
-
-
-            //                    Console.WriteLine("turn" + turn + "");
-            //                    break;
-            //                }
-            //            }
-            //        }
-            //    }
-
-
-            //}
-            //Console.WriteLine("klik");
-            //Console.WriteLine(papan.getJumlahWong() + "");
-            //panel1.Invalidate();
-        }   
-
-        
-
-        private void panel1_DragDrop(object sender, DragEventArgs e)
-        {
-            //Console.WriteLine("drag");
         }
 
         private void panel1_MouseMove(object sender, MouseEventArgs e)
@@ -891,25 +829,8 @@ namespace macanan
             {
                 Rectangle rect_cursor = new Rectangle(e.X - 25, e.Y - 25, 1, 1);
                 pos[indexdrag] = new Point(e.X - 25, e.Y - 25);
-
-                //for (int i = 1; i < rectpos.Length; i++)
-                //{
-                //    if (i != indexpointdrag)
-                //    {
-                //        if (rect_cursor.IntersectsWith(rectpos[i]))
-                //        {
-                //            pos[indexdrag] = point[i];
-                //            statusPos[i] = 'O';
-                //            statusPos[indexpointdrag] = 'X';
-
-                //            drag = false;
-                //            break;
-                //        }
-                //    }
-                //}
                 
-                panel1.Invalidate();
-                 
+                panel1.Invalidate();    
             }
         }
 
@@ -924,7 +845,6 @@ namespace macanan
                 {
                     if (statusPos[i] == 'X')
                     {
-
                         if (i != indexpointdrag)
                         {
                             Rectangle temprect = new Rectangle(pos[indexdrag].X, pos[indexdrag].Y, 50, 50);
@@ -935,6 +855,13 @@ namespace macanan
                                     pos[indexdrag] = point[i];
                                     statusPos[i] = 'O';
                                     statusPos[indexpointdrag] = 'X';
+                                    papan.setStatusPos(indexpointdrag, 'X');
+                                    papan.setStatusPos(i, 'O');
+
+                                    bidak[indexdrag].setPoint(i);
+                                    bidak[indexdrag].setNextpos(nextpos[i]);
+                                    bidak[indexdrag].setPath(path[i]);
+                                    papan.setBidak(bidak);
 
                                     drag = false;
                                     turn++;
@@ -945,9 +872,6 @@ namespace macanan
                         }
                     }
 
-                        //if (nemu) break;
-                        
-                    //}
 
                 }
 
@@ -1048,6 +972,39 @@ namespace macanan
             {
                 //manggil Ai harusnya
 
+                if (AIMacan)
+                {
+                    //bunuh 3 orang
+                    Random rand = new Random();
+                    List<int> indexbunuh = new List<int>();
+                    if (turn == 1)
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            int rnd = rand.Next(0, bidak.Count); //dapetin index bidak random
+                            if (i > 0)
+                            {
+                                while (true)
+                                {
+                                    rnd = rand.Next(0, bidak.Count);
+                                    if (!(indexbunuh.Contains(rnd))) break;
+                                }
+                            }
+                            indexbunuh.Add(rnd);
+                        }
+
+                        for (int i = 0; i < indexbunuh.Count; i++)
+                        {
+                            int ix = indexbunuh[i];
+                            bidak[ix].setIsDead(true);
+                            
+                            int pointbidakmati = bidak[ix].getPoint();
+                            statusPos[pointbidakmati] = 'X';
+                            papan.setStatusPos(pointbidakmati, 'X');
+                        }
+                    }
+                }
+
                 for (int i = 1; i < rectpos.Length; i++)
                 {
                     if (rect_cursor.IntersectsWith(rectpos[i]) && pos.Count < 21)
@@ -1073,6 +1030,77 @@ namespace macanan
                             else
                             {
                                 int posMacan = bidak[indexMacan].getPoint();
+
+                                for (int j = 0; j < path[posMacan].Length; j++)
+                                {
+                                    for (int k = 0; k < path[posMacan][j].Length; k++)
+                                    {
+                                        if (k > 0) // bukan nextpos
+                                        {
+                                            int nextpointinpath = path[posMacan][j][k];
+                                            if (i == nextpointinpath)
+                                            {
+                                                int jumlahorang = 0;
+                                                //makan atau ga
+                                                for (int L = 0; L < k; L++) //k == L maknanya
+                                                {
+                                                    int cekpoint = path[posMacan][j][L];
+                                                    if (statusPos[cekpoint] == 'O')
+                                                    {
+                                                        jumlahorang++;
+                                                    }
+                                                }
+
+                                                if (jumlahorang % 2 == 1) //boleh makan
+                                                {
+                                                    for (int L = 0; L < k; L++)
+                                                    {
+                                                        int cekpoint = path[posMacan][j][L];
+
+                                                        for (int m = 0; m < bidak.Count; m++)
+                                                        {
+                                                            if (bidak[m].getPoint() == cekpoint)
+                                                            {
+                                                                bidak[m].setIsDead(true);
+                                                            }
+                                                        }
+
+
+                                                        statusPos[cekpoint] = 'X';
+                                                        papan.setStatusPos(cekpoint, 'X');
+                                                    }
+                                                    turn++;
+                                                }
+                                                pos[indexMacan] = point[i];
+                                                bidak[indexMacan].setPos(point[i]);
+                                                bidak[indexMacan].setPoint(i);
+                                                bidak[indexMacan].setNextpos(nextpos[indexMacan]);
+                                                statusPos[i] = 'M';
+                                                statusPos[indexpointmacan] = 'X';
+
+                                                indexpointmacan = i;
+                                                break;
+                                            }
+                                        }
+                                        else //ini pasti nextpos
+                                        {
+                                            int nextpointinpath = path[posMacan][j][k]; //pasti k=0
+                                            if (i == nextpointinpath)
+                                            {
+                                                pos[indexMacan] = point[i];
+                                                bidak[indexMacan].setPos(point[i]);
+                                                bidak[indexMacan].setPoint(i);
+                                                bidak[indexMacan].setNextpos(nextpos[indexMacan]);
+                                                statusPos[i] = 'M';
+                                                statusPos[indexpointmacan] = 'X';
+
+                                                indexpointmacan = i;
+                                                turn++;
+                                            }
+                                        }
+                                    }
+                                }
+
                                 for (int j = 0; j < nextpos[posMacan].Length; j++)
                                 {
                                     Console.WriteLine(i + " == " + nextpos[posMacan][j]);
@@ -1084,9 +1112,13 @@ namespace macanan
                                         bidak[indexMacan].setNextpos(nextpos[indexMacan]);
                                         statusPos[i] = 'M';
                                         statusPos[indexpointmacan] = 'X';
+
+                                        indexpointmacan = i;
                                         turn++;
                                     }
                                 }
+
+
 
                             }
 
@@ -1098,11 +1130,133 @@ namespace macanan
                     }
                 }
 
+                //untuk AI abaikan codingan yg atas (yg di dalam for)
+                //if (pos.Count > 9)
+                //{
+                //    int i = 0; //ini variable kodeposmu
+                //    int indexMacan = 0; //ini variable kode jenis
+                //    pos[indexMacan] = point[i];
+                //    bidak[indexMacan].setPos(point[i]);
+                //    bidak[indexMacan].setPoint(i);
+                //    bidak[indexMacan].setNextpos(nextpos[indexMacan]);
+                //    statusPos[i] = 'M';
+                //    statusPos[indexpointmacan] = 'X';
+
+                //    indexpointmacan = i;
+                //    turn++;
+                //}
 
             }
             Console.WriteLine("klik");
             Console.WriteLine(papan.getJumlahWong() + "");
             panel1.Invalidate();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked) //player as WONG, AI = MACAN
+            {
+                AIMacan = true;
+                start = true;
+            }
+            else if (radioButton2.Checked) //player as MACAN, AI = WONG
+            {
+                AIWong = true;
+                start = true;
+            }
+            else if (radioButton3.Checked) //DEMO
+            {
+                AIMacan = true;
+                AIWong = true;
+                start = true;
+            }
+
+            if (start)
+            {
+                
+                panel2.Visible = false;
+                panel1.Visible = true;
+                Random rand = new Random();
+
+                if (AIWong)
+                {
+                    //inisialisasi awal AIWong
+                    int mode = rand.Next(1, 6);
+                    /*
+                     * 1 = segitiga atas
+                     * 2 = segitiga bawah
+                     * 3 = segitiga kiri
+                     * 4 = segitiga kanan
+                     * 5 = kotak
+                     * */
+
+                    int[] array = { 0 };
+                    mode = 5;
+                    if (mode == 1)
+                    {
+                        //segitiga atas
+                        array = new int[9] { 9, 13, 14, 15, 17, 18, 19, 20, 21 };
+                        
+                    }
+                    else if (mode == 2)
+                    {
+                        //segitiga bawah
+                        array = new int[9] { 17, 18, 19, 20, 21, 23, 24, 25, 29 };
+                    }
+                    else if (mode == 3)
+                    {
+                        //segitiga kiri
+                        array = new int[9] { 9, 13, 14, 17, 18, 19, 23, 24, 29 };
+                    }
+                    else if (mode == 4)
+                    {
+                        //segitiga kanan
+                        array = new int[9] { 9, 14, 15, 19, 20, 21, 24, 25, 29 };
+                    }
+                    else if (mode == 5)
+                    {
+                        int letak = rand.Next(0, 9);
+                        array = new int[9] { 7, 8, 9, 12, 13, 14, 17, 18, 19 };
+                        int[] temparray = new int[9];
+                        int counter = array[letak];
+                        for (int i = 0; i < 9; i++)
+                        {
+
+                            temparray[i] = counter;
+                            if ((i + 1) % 3 == 0)
+                            {
+                                counter = array[letak] + (5 * ((i + 1) / 3));
+                            }
+                            else
+                                counter++;
+                        }
+
+                        array = temparray;
+                    }
+
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        int ar = array[i];
+                        Point temp = point[ar];
+                        pos.Add(temp);
+
+                        nowpos = temp;
+                        
+
+                        //pos.Add(point[i]);
+
+                        int index = pos.Count - 1;
+                        bidak.Add(new Bidak(temp, i, "Wong", nextpos[ar], path[ar]));
+                        papan.setBidak(bidak);
+                        papan.setStatusPos(ar, 'O');
+                        statusPos[ar] = 'O';
+
+                    }
+                    bidakkiri -= 9;
+                }
+                panel1.Focus();
+                panel1.Invalidate();
+            }
         }
 
         

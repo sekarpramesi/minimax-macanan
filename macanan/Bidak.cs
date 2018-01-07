@@ -153,16 +153,16 @@ namespace macanan
                         pos = path[i][j];
                         if (statusPos[pos] == 'O')
                         {
-                            
+
                             jumlahWong++;
 
-                            
+
                         }
                         else if (statusPos[pos] == 'X')
                         {
                             if (jumlahWong % 2 == 1)
                             {
-                                
+
                                 jumlah++;
                             }
                             break;

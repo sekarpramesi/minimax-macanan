@@ -52,7 +52,7 @@ namespace macanan
         {
             this.jumlahWong = jumlah;
         }
-        
+
         public int getJumlahWong()
         {
             return this.jumlahWong;
