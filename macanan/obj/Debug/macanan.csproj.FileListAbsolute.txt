@@ -1,0 +1,12 @@
+C:\Users\user\Desktop\Proyek AI\macanan\macanan\bin\Debug\macanan.exe.config
+C:\Users\user\Desktop\Proyek AI\macanan\macanan\bin\Debug\macanan.exe
+C:\Users\user\Desktop\Proyek AI\macanan\macanan\bin\Debug\macanan.pdb
+C:\Users\user\Desktop\Proyek AI\macanan\macanan\obj\Debug\macanan.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\Proyek AI\macanan\macanan\obj\Debug\macanan.Form1.resources
+C:\Users\user\Desktop\Proyek AI\macanan\macanan\obj\Debug\macanan.Properties.Resources.resources
+C:\Users\user\Desktop\Proyek AI\macanan\macanan\obj\Debug\macanan.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\Proyek AI\macanan\macanan\obj\Debug\macanan.exe
+C:\Users\user\Desktop\Proyek AI\macanan\macanan\obj\Debug\macanan.pdb
+E:\Documents\macanan\macanan\bin\Debug\macanan.exe.config
+E:\Documents\macanan\macanan\obj\Debug\macanan.exe
+E:\Documents\macanan\macanan\obj\Debug\macanan.pdb
